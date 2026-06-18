@@ -1,0 +1,36 @@
+// ==========================================
+// Config.js.example - ไฟล์ตัวอย่างค่าตัวแปรคงที่สำหรับระบบ
+// (ให้เปลี่ยนชื่อไฟล์เป็น Config.js ก่อนนำไปใช้งาน และห้ามนำขึ้น Git)
+// Telegram-First Standalone Maintenance System
+// ==========================================
+
+// 1. Telegram Bot Settings
+const TELEGRAM_TOKEN = "YOUR_TELEGRAM_BOT_TOKEN_HERE";
+const TELEGRAM_GROUP_CHAT_ID = "YOUR_TELEGRAM_GROUP_CHAT_ID_HERE"; // สำหรับส่งการ์ดแจ้งงานเข้ากลุ่มช่าง (เอามาจาก @RawDataBot)
+
+// 2. Gemini AI Settings
+const GEMINI_API_KEY = "YOUR_GEMINI_API_KEY_HERE";
+
+// 3. Google Drive Settings
+const GOOGLE_DRIVE_FOLDER_ID = "YOUR_GOOGLE_DRIVE_FOLDER_ID"; // โฟลเดอร์สำหรับเก็บรูปภาพซ่อมงาน
+const GOOGLE_DRIVE_PDF_FOLDER_ID = "YOUR_PDF_FOLDER_ID_HERE"; // สำหรับเก็บไฟล์ PDF Report (ดู ID จาก URL โฟลเดอร์ใน Drive)
+
+// 4. Security & Access Control
+const COMPANY_SECRET_CODE = "PTTEP2026"; // รหัสลับบริษัทสำหรับช่างลงทะเบียน
+const BOSS_TELEGRAM_CHAT_ID = "YOUR_BOSS_TELEGRAM_ID_HERE"; // Telegram Chat ID ของผู้บริหารที่มีสิทธิ์ดูรายงาน (VIEW_REPORT)
+
+// 5. Google Sheets (Optional, ถ้าใช้ Active Spreadsheet สามารถละได้ แต่แนะนำให้ระบุ ID ถ้าจะรันเป็น Web App แบบ Standalone)
+const SPREADSHEET_ID = "YOUR_SPREADSHEET_ID_HERE"; // เปลี่ยนเป็น ID ของ Spreadsheet หลัก (ดู ID จาก URL ของ Sheet)
+
+// ฟังก์ชัน Helper สำหรับเรียกใช้ Config (ถ้าต้องการ exports เพื่อนำไปเทสต์นอก GAS)
+if (typeof module !== 'undefined') {
+  module.exports = {
+    TELEGRAM_TOKEN,
+    TELEGRAM_GROUP_CHAT_ID,
+    GEMINI_API_KEY,
+    GOOGLE_DRIVE_FOLDER_ID,
+    COMPANY_SECRET_CODE,
+    BOSS_TELEGRAM_CHAT_ID,
+    SPREADSHEET_ID
+  };
+}

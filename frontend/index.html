@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Maintenance System</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Google Identity Services -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    
+    <style>
+        :root {
+            --primary-navy: #0A192F;
+            --secondary-navy: #112240;
+            --text-white: #E6F1FF;
+            --accent-blue: #64FFDA;
+        }
+        
+        body {
+            background-color: #F8F9FA;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .navbar {
+            background-color: var(--primary-navy);
+        }
+
+        .navbar-brand {
+            color: var(--text-white) !important;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        .card-stat {
+            border-left: 5px solid var(--primary-navy);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .table-custom {
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .table-custom th {
+            background-color: var(--secondary-navy);
+            color: white;
+        }
+
+        .gallery-img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .gallery-img:hover {
+            transform: scale(1.05);
+        }
+
+        #error-msg {
+            display: none;
+            font-weight: bold;
+            color: #DC3545;
+            font-size: 1.2rem;
+            text-align: center;
+            margin-top: 2rem;
+        }
+
+        #dashboard-content {
+            display: none;
+        }
+
+        .login-container {
+            height: 80vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-dark mb-4">
+        <div class="container">
+            <a class="navbar-brand" href="#">⚙️ Maintenance System</a>
+            <div class="d-flex">
+                <span id="user-info" class="text-white me-3 align-self-center"></span>
+                <button id="logout-btn" class="btn btn-outline-light btn-sm" style="display:none;" onclick="handleLogout()">Logout</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- Error Message -->
+        <div id="error-msg" class="alert alert-danger" role="alert">
+            Access Denied: คุณไม่มีสิทธิ์เข้าถึงข้อมูลในระบบนี้
+        </div>
+
+        <!-- Login Section -->
+        <div id="login-section" class="login-container">
+            <h2 class="mb-4" style="color: var(--primary-navy); font-weight: bold;">เข้าสู่ระบบ Dashboard</h2>
+            <div id="g_id_onload"
+                 data-client_id="YOUR_GOOGLE_CLIENT_ID_HERE.apps.googleusercontent.com"
+                 data-callback="handleCredentialResponse"
+                 data-auto_prompt="false">
+            </div>
+            <div class="g_id_signin"
+                 data-type="standard"
+                 data-size="large"
+                 data-theme="outline"
+                 data-text="sign_in_with"
+                 data-shape="rectangular"
+                 data-logo_alignment="left">
+            </div>
+        </div>
+
+        <!-- Dashboard Content -->
+        <div id="dashboard-content">
+            <!-- Stats -->
+            <div class="row mb-4">
+                <div class="col-md-4">
+                    <div class="card card-stat">
+                        <div class="card-body">
+                            <h5 class="card-title text-muted">งานทั้งหมด (Total Jobs)</h5>
+                            <h2 class="card-text" id="stat-total">0</h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card card-stat" style="border-left-color: #FFC107;">
+                        <div class="card-body">
+                            <h5 class="card-title text-muted">งานค้าง (Pending)</h5>
+                            <h2 class="card-text" id="stat-pending">0</h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card card-stat" style="border-left-color: #198754;">
+                        <div class="card-body">
+                            <h5 class="card-title text-muted">งานสำเร็จ (Success)</h5>
+                            <h2 class="card-text" id="stat-success">0</h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Table -->
+            <h4 class="mb-3" style="color: var(--primary-navy);">Master Job List</h4>
+            <div class="table-responsive table-custom mb-5">
+                <table class="table table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th>Job ID</th>
+                            <th>วันที่แจ้ง</th>
+                            <th>สถานที่</th>
+                            <th>รายละเอียด</th>
+                            <th>ผู้แจ้ง</th>
+                            <th>ช่างรับผิดชอบ</th>
+                            <th>สถานะ</th>
+                        </tr>
+                    </thead>
+                    <tbody id="job-table-body">
+                        <!-- Data will be populated here -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Gallery -->
+            <h4 class="mb-3" style="color: var(--primary-navy);">ภาพผลงานการซ่อม (Gallery)</h4>
+            <div class="row" id="gallery-container">
+                <!-- Images will be populated here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // กำหนด URL ของ Google Apps Script Webhook ที่ Deploy เป็น Web App
+        const GAS_WEBHOOK_URL = "YOUR_GAS_WEBAPP_URL_HERE";
+
+        function parseJwt (token) {
+            var base64Url = token.split('.')[1];
+            var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+            var jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function(c) {
+                return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+            }).join(''));
+            return JSON.parse(jsonPayload);
+        }
+
+        function handleCredentialResponse(response) {
+            const responsePayload = parseJwt(response.credential);
+            const userEmail = responsePayload.email;
+            const userName = responsePayload.name;
+
+            document.getElementById('user-info').innerText = `Welcome, ${userName}`;
+            document.getElementById('login-section').style.display = 'none';
+            document.getElementById('logout-btn').style.display = 'block';
+
+            fetchDashboardData(userEmail);
+        }
+
+        function handleLogout() {
+            document.getElementById('user-info').innerText = '';
+            document.getElementById('login-section').style.display = 'flex';
+            document.getElementById('logout-btn').style.display = 'none';
+            document.getElementById('dashboard-content').style.display = 'none';
+            document.getElementById('error-msg').style.display = 'none';
+            // รีเซ็ตข้อมูลต่างๆ
+        }
+
+        function fetchDashboardData(email) {
+            // โชว์ Loading (ซ่อน error ก่อน)
+            document.getElementById('error-msg').style.display = 'none';
+
+            fetch(GAS_WEBHOOK_URL, {
+                method: 'POST',
+                mode: 'no-cors', // อาจต้องพิจารณาใช้โหมด cors ถ้าตั้งค่า GAS อนุญาต แนะนำให้อ่านคำเตือน CORS
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    source: 'web_frontend',
+                    email: email
+                })
+            })
+            // หมายเหตุ: กรณีใช้ fetch ด้วย POST แบบ json ไปยัง GAS อาจจะติด CORS ได้
+            // สำหรับ GAS มักจะต้องตั้งค่า redirect หรือใช้ TextOutput
+            // เพื่อหลีกเลี่ยงปัญหา CORS ในขั้น Prototype อาจใช้ JSONP หรือตั้งค่าแบบนี้:
+            fetch(GAS_WEBHOOK_URL, {
+                method: 'POST',
+                body: JSON.stringify({
+                    source: 'web_frontend',
+                    email: email
+                })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    renderDashboard(data.data);
+                } else {
+                    showError(data.message || "Access Denied");
+                }
+            })
+            .catch(err => {
+                console.error("Fetch error: ", err);
+                // แสดงผลจำลองสำหรับให้เห็นหน้าตาตอนทำ Development
+                // showError("เกิดข้อผิดพลาดในการเชื่อมต่อกับเซิร์ฟเวอร์");
+            });
+        }
+
+        function showError(msg) {
+            const errorDiv = document.getElementById('error-msg');
+            errorDiv.innerText = msg;
+            errorDiv.style.display = 'block';
+            document.getElementById('dashboard-content').style.display = 'none';
+        }
+
+        function renderDashboard(jobs) {
+            document.getElementById('dashboard-content').style.display = 'block';
+            document.getElementById('error-msg').style.display = 'none';
+
+            let total = jobs.length;
+            let pending = 0;
+            let success = 0;
+
+            const tbody = document.getElementById('job-table-body');
+            const gallery = document.getElementById('gallery-container');
+            
+            tbody.innerHTML = '';
+            gallery.innerHTML = '';
+
+            jobs.forEach(job => {
+                // คำนวณ Stats
+                if (job.Status === 'Pending') pending++;
+                if (job.Status === 'Success') success++;
+
+                // เพิ่ม Row ใน Table
+                const date = new Date(job.Timestamp).toLocaleDateString('th-TH');
+                let statusBadge = '';
+                const actionBtn = job.Status === 'Pending' ? 
+                    '<button class="btn btn-sm btn-outline-primary" disabled>⏳ รอช่างปิดงาน</button>' : 
+                    '<button class="btn btn-sm btn-outline-secondary" disabled>✅ ปิดงานแล้ว</button>';
+                
+                let imageBtn = '';
+                if (job.Photo_URL && job.Photo_URL !== "") {
+                    imageBtn = `<button class="btn btn-sm btn-outline-info ms-1" onclick="window.open('${job.Photo_URL}', '_blank')">🖼️ รูปหลังซ่อม</button>`;
+                }
+                
+                let reportImageBtn = '';
+                if (job.Reported_Photo_URL && job.Reported_Photo_URL !== "") {
+                    reportImageBtn = `<button class="btn btn-sm btn-outline-secondary ms-1" onclick="window.open('${job.Reported_Photo_URL}', '_blank')">📸 รูปแจ้งซ่อม</button>`;
+                }
+                
+                if (job.Status === 'Success') {
+                    statusBadge = '<span class="badge bg-success">Success</span>';
+                } else if (job.Status === 'Cancelled') {
+                    statusBadge = '<span class="badge bg-danger">Cancelled</span>';
+                } else {
+                    statusBadge = '<span class="badge bg-warning text-dark">Pending</span>';
+                }
+                
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><strong>${job.Job_ID}</strong></td>
+                    <td>${date}</td>
+                    <td>${job.Location}</td>
+                    <td>${job.Issue_Detail}</td>
+                    <td>${job.Reporter_Name}</td>
+                    <td>${job.Technician_Name || '-'}</td>
+                    <td>${statusBadge}</td>
+                    <td>${actionBtn} ${reportImageBtn} ${imageBtn}</td>
+                `;
+                tbody.appendChild(tr);
+
+                // เพิ่มรูปภาพใน Gallery
+                if (job.Photo_URL && job.Photo_URL.startsWith('http')) {
+                    const col = document.createElement('div');
+                    col.className = 'col-md-3 mb-4';
+                    col.innerHTML = `
+                        <div class="card h-100 shadow-sm border-0">
+                            <img src="${job.Photo_URL}" class="gallery-img" alt="Job Evidence" onclick="window.open('${job.Photo_URL}', '_blank')">
+                            <div class="card-body p-2 text-center">
+                                <small class="text-muted">${job.Job_ID}</small>
+                            </div>
+                        </div>
+                    `;
+                    gallery.appendChild(col);
+                }
+            });
+
+            document.getElementById('stat-total').innerText = total;
+            document.getElementById('stat-pending').innerText = pending;
+            document.getElementById('stat-success').innerText = success;
+        }
+    </script>
+</body>
+</html>
