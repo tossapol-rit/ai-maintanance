@@ -164,7 +164,7 @@ function handleTelegramMessage(message) {
   // กรณีเป็นคำสั่งลงทะเบียน: /register [รหัสลับ] [ชื่อพนักงาน]
   if (text.startsWith("/register")) {
     if (isTechnician) {
-      sendTelegramMessage(chatId, "ท่านได้ลงทะเบียนในระบบเรียบร้อยแล้ว");
+      sendTelegramMessage(chatId, "คุณลงทะเบียนในระบบเรียบร้อยแล้วค่ะ");
       return;
     }
 
@@ -177,7 +177,7 @@ function handleTelegramMessage(message) {
         var newTechId = "TECH-" + Utilities.formatDate(new Date(), "GMT+7", "yyMMddHHmm");
         // [Tech_ID, Name, Google_Email, Telegram_Chat_ID, Status]
         techsSheet.appendRow([newTechId, name, "", chatId, "Active"]);
-        sendTelegramMessage(chatId, "ลงทะเบียนสำเร็จ! รหัสช่างของคุณคือ: " + newTechId);
+        sendTelegramMessage(chatId, "ลงทะเบียนสำเร็จค่า! รหัสช่างของคุณคือ: " + newTechId);
       } else {
         sendTelegramMessage(chatId, "รหัสลับบริษัทไม่ถูกต้อง การลงทะเบียนถูกปฏิเสธ");
       }
@@ -270,7 +270,7 @@ function handleTelegramMessage(message) {
       break;
     case "UNKNOWN":
     default:
-      sendTelegramMessage(chatId, "🤖 ผมไม่เข้าใจคำสั่งของคุณครับ (Intent: UNKNOWN)\nกรุณาลองใหม่อีกครั้ง เช่น ขอดูงานค้าง, ขอรายงานสรุป, หรือ ปิดงาน JOB-123");
+      sendTelegramMessage(chatId, "🤖 น้องฟ้าไม่เข้าใจคำสั่งของคุณค่ะ (Intent: UNKNOWN)\nรบกวนลองใหม่อีกครั้งนะคะ เช่น ขอดูงานค้าง, ขอรายงานสรุป, หรือ ปิดงาน JOB-123");
       break;
   }
 }
@@ -334,7 +334,7 @@ function handleViewReport(chatId, isBoss) {
     return;
   }
 
-  sendTelegramMessage(chatId, "กำลังรวบรวมและวิเคราะห์ข้อมูลรายงาน กรุณารอสักครู่...");
+  sendTelegramMessage(chatId, "น้องฟ้ากำลังรวบรวมและวิเคราะห์ข้อมูลรายงานให้ค่ะ รอสักครู่นะคะ...");
 
   var ss = getSpreadsheet();
   var jobsSheet = ss.getSheetByName("Jobs");
@@ -346,7 +346,7 @@ function handleViewReport(chatId, isBoss) {
     dataString += "Job: " + data[i][0] + ", Status: " + data[i][9] + ", Detail: " + data[i][5] + "\n";
   }
 
-  var prompt = "โปรดสรุปข้อมูลงานซ่อมบำรุงต่อไปนี้เป็นรายงานสั้นๆ สำหรับผู้บริหาร (สรุปจำนวนงานทั้งหมด, งานสำเร็จ, งานค้าง และไฮไลท์งานสำคัญ):\n\n" + dataString;
+  var prompt = "โปรดสรุปข้อมูลงานซ่อมบำรุงต่อไปนี้เป็นรายงานสั้นๆ สำหรับผู้บริหาร (สรุปจำนวนงานทั้งหมด, งานสำเร็จ, งานค้าง และไฮไลท์งานสำคัญ) โดยให้ตอบกลับในฐานะ 'น้องฟ้า' ผู้ช่วยสาวไทยสุดร่าเริง สดใส และลงท้ายด้วย 'ค่ะ' เสมอ:\n\n" + dataString;
   var summary = callGemini(prompt);
 
   // สร้างไฟล์ PDF จากรายงาน
@@ -470,7 +470,7 @@ function handleCreateJob(chatId, text, isStateContinuation, photoArray) {
       if (!jobData.Location || jobData.Location.trim() === "") missing.push("สถานที่");
       if (!jobData.Issue_Detail || jobData.Issue_Detail.trim() === "") missing.push("อาการเสีย");
       
-      sendTelegramMessage(chatId, "⚠️ ข้อมูลยังไม่ครบถ้วนครับ ขาดข้อมูล: **" + missing.join(" และ ") + "**\nกรุณาพิมพ์ข้อมูลที่ขาดเพิ่มเติมมาได้เลยครับ (ระบบกำลังจำข้อมูลเดิมรอไว้แล้ว)");
+      sendTelegramMessage(chatId, "⚠️ ข้อมูลยังไม่ครบถ้วนค่ะ ขาดข้อมูล: **" + missing.join(" และ ") + "**\nรบกวนพิมพ์ข้อมูลที่ขาดเพิ่มเติมมาได้เลยนะคะ (น้องฟ้าจำข้อมูลเดิมรอไว้ให้แล้วค่ะ)");
       return;
     }
 
@@ -498,7 +498,7 @@ function handleCreateJob(chatId, text, isStateContinuation, photoArray) {
       "", "", "Pending", "", "", photoUrl
     ]);
 
-    sendTelegramMessage(chatId, "✅ บันทึกงานใหม่รหัส: " + jobId + " เรียบร้อยแล้ว");
+    sendTelegramMessage(chatId, "✅ น้องฟ้าบันทึกงานใหม่รหัส: " + jobId + " เรียบร้อยแล้วค่ะ");
     
     // แจ้งเตือนเข้ากลุ่มช่าง
     if (TELEGRAM_GROUP_CHAT_ID) {
@@ -601,7 +601,7 @@ function handleAssignJob(chatId, text, actorName) {
     jobsSheet.getRange(jobRowIndex, 12).setValue(newNote);
 
     // 4. ส่งข้อความยืนยันให้ Admin
-    sendTelegramMessage(chatId, "✅ โอนงาน " + targetJobId + " ให้ " + actualTechName + " เรียบร้อยแล้ว");
+    sendTelegramMessage(chatId, "✅ น้องฟ้าโอนงาน " + targetJobId + " ให้ " + actualTechName + " เรียบร้อยแล้วค่ะ");
 
     // 5. แจ้งเตือนไปหาช่าง
     if (foundTechChatId) {
@@ -681,7 +681,7 @@ function handleCloseJob(chatId, techId, techName, text, photoArray) {
     var fileId = getTelegramFile(photoArray[photoArray.length - 1].file_id); // เอารูปความละเอียดสูงสุด
     if (fileId) photoUrl = saveToDrive(fileId, targetJobId);
   } else {
-    sendTelegramMessage(chatId, "⚠️ คำเตือน: กรุณาแนบรูปภาพผลงานการซ่อมมาพร้อมกับการปิดงานด้วยครับ");
+    sendTelegramMessage(chatId, "⚠️ รบกวนแนบรูปภาพผลงานการซ่อมมาพร้อมกับการปิดงานด้วยนะคะ");
     return; // บังคับให้ส่งรูปภาพ
   }
 
@@ -701,7 +701,7 @@ function handleCloseJob(chatId, techId, techName, text, photoArray) {
   jobsSheet.getRange(jobRowIndex, 11).setValue(photoUrl);
   jobsSheet.getRange(jobRowIndex, 12).setValue(newNote);
 
-  sendTelegramMessage(chatId, "✅ ปิดงาน " + targetJobId + " เรียบร้อยแล้ว!\n🕒 เวลาปิดงาน: " + timeStr + "\n📝 บันทึก: " + formalNote);
+  sendTelegramMessage(chatId, "✅ น้องฟ้าปิดงาน " + targetJobId + " เรียบร้อยแล้วค่า!\n🕒 เวลาปิดงาน: " + timeStr + "\n📝 บันทึก: " + formalNote);
 }
 
 function handleCheckWorkload(chatId) {
@@ -745,7 +745,7 @@ function handleListUnassignedJob(chatId) {
   if (unassigned.length > 0) {
     sendTelegramMessage(chatId, "📋 **รายการงานที่ยังไม่ได้แจก (Unassigned):**\n\n" + unassigned.join("\n"));
   } else {
-    sendTelegramMessage(chatId, "🎉 ไม่มีงานที่รอแจกครับ");
+    sendTelegramMessage(chatId, "🎉 ไม่มีงานที่รอแจกค่ะ");
   }
 }
 
@@ -765,7 +765,7 @@ function handleListAllPendingJob(chatId) {
   if (pending.length > 0) {
     sendTelegramMessage(chatId, "📋 **รายการงานค้างทั้งหมด (All Pending):**\n\n" + pending.join("\n"));
   } else {
-    sendTelegramMessage(chatId, "🎉 ไม่มีงานค้างในระบบครับ");
+    sendTelegramMessage(chatId, "🎉 ไม่มีงานค้างในระบบเลยค่ะ เยี่ยมมาก!");
   }
 }
 
@@ -850,7 +850,7 @@ function handleCancelJob(chatId, text, actorName) {
     var newNote = oldNote ? oldNote + " | [ยกเลิก] " + cancelLogInfo : "[ยกเลิก] " + cancelLogInfo;
     jobsSheet.getRange(jobRowIndex, 12).setValue(newNote);
 
-    sendTelegramMessage(chatId, "✅ ยกเลิกงาน " + targetJobId + " เรียบร้อยแล้ว\n📝 ผู้ยกเลิก: " + actorName + "\n🕒 เวลา: " + timeStr + "\n💬 เหตุผล: " + reason);
+    sendTelegramMessage(chatId, "✅ น้องฟ้ายกเลิกงาน " + targetJobId + " เรียบร้อยแล้วค่ะ\n📝 ผู้ยกเลิก: " + actorName + "\n🕒 เวลา: " + timeStr + "\n💬 เหตุผล: " + reason);
 
   } catch (e) {
     sendTelegramMessage(chatId, "❌ เกิดข้อผิดพลาดในการยกเลิกงาน: " + e.message);
@@ -863,7 +863,7 @@ function handleSlaReport(chatId, isBoss) {
     return;
   }
 
-  sendTelegramMessage(chatId, "กำลังประมวลผลสถิติ SLA และจัดอันดับ กรุณารอสักครู่...");
+  sendTelegramMessage(chatId, "น้องฟ้ากำลังประมวลผลสถิติ SLA และจัดอันดับให้ค่ะ รอสักครู่นะคะ...");
 
   var ss = getSpreadsheet();
   var jobsData = ss.getSheetByName("Jobs").getDataRange().getValues();
@@ -905,7 +905,7 @@ function handleSlaReport(chatId, isBoss) {
   }
 
   if (slaDataList.length === 0) {
-    sendTelegramMessage(chatId, "📊 **รายงานสถิติ SLA**\nยังไม่มีข้อมูลงานที่ซ่อมเสร็จสมบูรณ์เพื่อใช้วิเคราะห์สถิติครับ");
+    sendTelegramMessage(chatId, "📊 **รายงานสถิติ SLA**\nยังไม่มีข้อมูลงานที่ซ่อมเสร็จสมบูรณ์เพื่อใช้วิเคราะห์สถิติเลยค่ะ");
     return;
   }
 
@@ -915,7 +915,7 @@ function handleSlaReport(chatId, isBoss) {
     dataString += "Job: " + d.jobId + ", Tech: " + d.techName + ", WaitToAssign: " + d.waitTimeToAssign + " min, WorkToClose: " + d.workTimeToClose + " min\n";
   }
 
-  var prompt = "โปรดสรุปข้อมูลสถิติ SLA ต่อไปนี้เป็นรายงานสำหรับผู้บริหาร โดยให้มีหัวข้อดังนี้ (ถ้าข้อมูลไหนไม่มีให้ข้ามไป):\n" +
+  var prompt = "โปรดสรุปข้อมูลสถิติ SLA ต่อไปนี้เป็นรายงานสำหรับผู้บริหาร ให้คุณตอบกลับในฐานะ 'น้องฟ้า' ผู้ช่วยสาวไทยสุดร่าเริง สดใส และลงท้ายด้วย 'ค่ะ' โดยให้มีหัวข้อดังนี้ (ถ้าข้อมูลไหนไม่มีให้ข้ามไป):\n" +
                "1. ⏱️ ภาพรวม (ค่าเฉลี่ยเวลารอแจกงาน และ ค่าเฉลี่ยเวลาซ่อม)\n" +
                "2. ⚡ Top 3 งานที่ช่างซ่อมเสร็จไวที่สุด (ระบุชื่อช่างและเวลาที่ใช้)\n" +
                "3. 🐌 Top 3 งานที่ใช้เวลาซ่อมนานที่สุด (เพื่อนำไปวิเคราะห์ปัญหา)\n" +
