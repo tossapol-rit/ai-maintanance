@@ -122,7 +122,15 @@ function handleTelegramMessage(message) {
   var adminData = adminsSheet.getDataRange().getValues();
 
   // 1. ระบบ Gatekeeper: ตรวจสอบสถานะผู้ใช้ (Boss, Admin, Technician)
-  var isBoss = (chatId === BOSS_TELEGRAM_CHAT_ID);
+  var isBoss = false;
+  var bossIds = String(BOSS_TELEGRAM_CHAT_ID).split(",");
+  for (var b = 0; b < bossIds.length; b++) {
+    if (String(chatId) === bossIds[b].trim()) {
+      isBoss = true;
+      break;
+    }
+  }
+  
   var isAdmin = false;
   var isTechnician = false;
   var techId = null;
